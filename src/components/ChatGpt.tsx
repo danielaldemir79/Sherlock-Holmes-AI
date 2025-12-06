@@ -6,6 +6,7 @@ import React, {
     useRef
 } from 'react';
 import { useDeduction } from '../hooks/useDeduction';
+import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
 import { ResponseMessageProps } from '../models/ResponseMessageProps';
 import { LoadChat, SaveChatWithId } from '../utils/ChatSerializer';
 import { QuizStatistics } from '../utils/quizStatistics';
@@ -14,11 +15,21 @@ import { DeductionMode } from './DeductionMode';
 import { QuizDisplay } from './QuizDisplay';
 import ResponseMessage from './ResponseMessage';
 
+export interface ChatGptHandle {
+    startQuizMode: () => void;
+    resetChat: () => void;
+    showQuizStatistics: () => void;
+    loadChatById: (chatId: string, caseName?: string) => void;
+    toggleDeductionMode: () => void;
+    isDeductionModeActive: () => boolean;
+    setQuizActive: (active: boolean) => void;
+}
+
 interface ChatGptProps {
     onChatSaved?: () => void;
 }
 
-export const ChatGpt = forwardRef(({ onChatSaved }: ChatGptProps, ref) => {
+export const ChatGpt = forwardRef<ChatGptHandle, ChatGptProps>(({ onChatSaved }, ref) => {
     const [inputMessage, setInputMessage] = React.useState<string>('');
     const [responseMessages, setResponseMessages] = React.useState<Array<ResponseMessageProps>>([]);
     const [responseMessage, setResponseMessage] = React.useState<ResponseMessageProps>({});
@@ -29,8 +40,9 @@ export const ChatGpt = forwardRef(({ onChatSaved }: ChatGptProps, ref) => {
     })
 
     // Voice functionality
-    const [isListening, setIsListening] = React.useState(false);
-    const [recognition, setRecognition] = React.useState<any>(null);
+    const { isListening, startListening, stopListening, isSupported, error: voiceError } = useSpeechRecognition((transcript) => {
+        setInputMessage(transcript);
+    });
 
     // Track thinking state (separate from loading)
     const [isThinking, setIsThinking] = React.useState(false);
@@ -89,23 +101,10 @@ export const ChatGpt = forwardRef(({ onChatSaved }: ChatGptProps, ref) => {
     }, [responseMessages, responseMessage, chatUid, isLoadingChat]);
 
     useEffect(() => {
-        if ('webkitSpeechRecognition' in window) {
-            const rec = new (window as any).webkitSpeechRecognition();
-            rec.lang = 'sv-SE';
-            rec.onresult = (e: any) => {
-                setInputMessage(e.results[0][0].transcript);
-                setIsListening(false);
-            };
-            rec.onend = () => setIsListening(false);
-            rec.onerror = (e: any) => {
-                setIsListening(false);
-                if (e.error === 'not-allowed') {
-                    alert('🎤 Ingen mikrofon hittades eller tillgång nekad!\\n\\n💡 Tips:\\n• Koppla in headset/mikrofon\\n• Kontrollera Windows ljudinställningar\\n• Prova på en annan dator med mikrofon');
-                }
-            };
-            setRecognition(rec);
+        if (voiceError === 'not-allowed') {
+            alert('🎤 Ingen mikrofon hittades eller tillgång nekad!\\n\\n💡 Tips:\\n• Koppla in headset/mikrofon\\n• Kontrollera Windows ljudinställningar\\n• Prova på en annan dator med mikrofon');
         }
-    }, []);
+    }, [voiceError]);
 
     // Show quiz statistics
     const showQuizStatistics = () => {
@@ -158,20 +157,15 @@ export const ChatGpt = forwardRef(({ onChatSaved }: ChatGptProps, ref) => {
 
     // Voice functionality
     const toggleVoice = () => {
-        if (!recognition) {
+        if (!isSupported) {
             alert('🚫 Röstinspelning stöds inte i din webbläsare.\\nProva Chrome eller Edge.');
             return;
         }
 
         if (isListening) {
-            recognition.stop();
+            stopListening();
         } else {
-            try {
-                recognition.start();
-                setIsListening(true);
-            } catch (error) {
-                alert('🎤 Ingen mikrofon hittades!\\n\\n💡 Lösningar:\\n• Koppla in ett headset/mikrofon\\n• Kontrollera Windows ljudinställningar\\n• Testa med en annan dator');
-            }
+            startListening();
         }
     };
 
@@ -480,7 +474,7 @@ Svara på svenska och var hjälpsam men håll dig till Holmes karaktär.`
                     />
 
                     <div className="button-row">
-                        {recognition && (
+                        {isSupported && (
                             <button
                                 className="inside-send-button voice-button"
                                 type="button"

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import bakerSign from './assets/Bakerstreet.png';
-import { ChatGpt } from './components/ChatGpt';
+import { ChatGpt, ChatGptHandle } from './components/ChatGpt';
 import { Menu } from './components/SideMenu';
 import { SoundProvider } from './contexts/SoundContext';
 import { LoadChatIndex } from './utils/ChatSerializer';
@@ -9,7 +9,7 @@ import { LoadChatIndex } from './utils/ChatSerializer';
 
 
 const App: React.FC = () => {
-  const chatRef = useRef<any>(null);
+  const chatRef = useRef<ChatGptHandle>(null);
   const [savedChats, setSavedChats] = useState<string[]>(LoadChatIndex());
   const [isDeductionActive, setIsDeductionActive] = useState(false);
 

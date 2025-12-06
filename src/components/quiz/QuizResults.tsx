@@ -1,6 +1,8 @@
+import { QuizState } from '../../models/QuizState';
+
 interface QuizResultsProps {
     message: string;
-    quizState?: any;
+    quizState?: QuizState;
 }
 
 export const QuizResults: React.FC<QuizResultsProps> = ({ message }) => {
