@@ -1,33 +1,16 @@
 import React, {
-    forwardRef,
     useEffect,
-    useImperativeHandle,
     useRef
 } from 'react';
-import { useHolmesAgent } from '../hooks/useHolmesAgent';
+import { useGameContext } from '../contexts/GameContext';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
-import { QuizStatistics } from '../utils/quizStatistics';
 import { DeductionAnimation } from './DeductionAnimation';
 import { DeductionMode } from './DeductionMode';
 import { QuizDisplay } from './QuizDisplay';
 import ResponseMessage from './ResponseMessage';
 
-export interface ChatGptHandle {
-    startQuizMode: () => void;
-    resetChat: () => void;
-    showQuizStatistics: () => void;
-    loadChatById: (chatId: string, caseName?: string) => void;
-    toggleDeductionMode: () => void;
-    isDeductionModeActive: () => boolean;
-    setQuizActive: (active: boolean) => void;
-}
-
-interface ChatGptProps {
-    onChatSaved?: () => void;
-}
-
-export const ChatGpt = forwardRef<ChatGptHandle, ChatGptProps>(({ onChatSaved }, ref) => {
-    // Use the new Holmes Agent hook
+export const ChatGpt: React.FC = () => {
+    // Use the Game Context
     const {
         inputMessage,
         setInputMessage,
@@ -39,19 +22,17 @@ export const ChatGpt = forwardRef<ChatGptHandle, ChatGptProps>(({ onChatSaved },
         loadedCaseInfo,
         deduction,
         processMessage,
-        resetChat: resetAgentChat,
-        loadChatById: loadAgentChat,
-        addSystemMessage
-    } = useHolmesAgent({ onChatSaved });
+        // Quiz state
+        isQuizActive,
+        setQuizActive,
+        startQuizTrigger,
+        setStartQuizTrigger
+    } = useGameContext();
 
     // Voice functionality
     const { isListening, startListening, stopListening, isSupported, error: voiceError } = useSpeechRecognition((transcript) => {
         setInputMessage(transcript);
     });
-
-    // Track if quiz is active (controlled by parent)
-    const [isQuizActive, setIsQuizActive] = React.useState<boolean>(false);
-    const [startQuizTrigger, setStartQuizTrigger] = React.useState<boolean>(false);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -76,12 +57,6 @@ export const ChatGpt = forwardRef<ChatGptHandle, ChatGptProps>(({ onChatSaved },
         }
     }, [voiceError]);
 
-    // Show quiz statistics
-    const showQuizStatistics = () => {
-        const statsMessage = QuizStatistics.getStatsMessage();
-        addSystemMessage(statsMessage);
-    };
-
     // Voice functionality
     const toggleVoice = () => {
         if (!isSupported) {
@@ -95,24 +70,6 @@ export const ChatGpt = forwardRef<ChatGptHandle, ChatGptProps>(({ onChatSaved },
             startListening();
         }
     };
-
-    // expose functions to parent (App.tsx)
-    useImperativeHandle(ref, () => ({
-        resetChat: () => {
-            resetAgentChat();
-            setIsQuizActive(false);
-            setStartQuizTrigger(false);
-        },
-        showQuizStatistics,
-        setQuizActive: setIsQuizActive,
-        startQuizMode: () => setStartQuizTrigger(true),
-        toggleDeductionMode: deduction.toggleDeductionMode,
-        isDeductionModeActive: () => deduction.isDeductionMode,
-
-        loadChatById: (chatId: string, caseName?: string) => {
-            loadAgentChat(chatId, caseName);
-        }
-    }));
 
     const handleSubmit = async (e?: React.FormEvent<EventTarget>) => {
         e?.preventDefault();
@@ -197,7 +154,7 @@ export const ChatGpt = forwardRef<ChatGptHandle, ChatGptProps>(({ onChatSaved },
                 <QuizDisplay
                     isActive={startQuizTrigger}
                     onStateChange={(active) => {
-                        setIsQuizActive(active);
+                        setQuizActive(active);
                         if (!active) setStartQuizTrigger(false);
                     }}
                 />
@@ -253,4 +210,5 @@ export const ChatGpt = forwardRef<ChatGptHandle, ChatGptProps>(({ onChatSaved },
             </form>
         </div>
     );
-});
+};
+

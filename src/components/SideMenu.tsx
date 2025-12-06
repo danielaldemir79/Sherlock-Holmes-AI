@@ -1,31 +1,28 @@
 import React from "react";
+import { useGameContext } from "../contexts/GameContext";
 import { CaseFileDrawer } from "./CaseFileDrawer";
 import { MusicToggle } from "./MusicToggle";
 import { DeductionToggle } from "./DeductionToggle";
 
 import quizIcon from "../assets/quizicon.png";
-import statsIcon from "../assets/statistik.png"; 
+import statsIcon from "../assets/statistik.png";
 
 
 interface MenuProps {
   savedChats: string[];
-  onStartQuiz?: () => void;
-  onResetChat?: () => void;
-  onShowQuizStats?: () => void;
-  onLoadChat?: (chatId: string, caseName?: string) => void;
-  onToggleDeduction?: () => void;
-  isDeductionActive?: boolean;
 }
 
 export const Menu: React.FC<MenuProps> = ({
   savedChats,
-  onStartQuiz,
-  onResetChat,
-  onShowQuizStats,
-  onLoadChat,
-  onToggleDeduction,
-  isDeductionActive = false,
 }) => {
+  const {
+    startQuizMode,
+    resetChat,
+    showQuizStatistics,
+    loadChatById,
+    deduction
+  } = useGameContext();
+
   return (
     <div className="menu">
       <h3 className="menu-title mt-4">📁 Cold Case Files</h3>
@@ -33,10 +30,10 @@ export const Menu: React.FC<MenuProps> = ({
       <div className="old-chat-container">
         <CaseFileDrawer
           savedChats={savedChats}
-          onLoadChat={(chatId, caseName) => onLoadChat?.(chatId, caseName)}
+          onLoadChat={loadChatById}
         />
       </div>
-      <button className="btn btn-secondary w-100" onClick={onResetChat}>
+      <button className="btn btn-secondary w-100" onClick={resetChat}>
         📁 New Case
       </button>
 
@@ -52,7 +49,7 @@ export const Menu: React.FC<MenuProps> = ({
       <hr className="menu-divider" />
       <ul>
         <li className="mb-2">
-          <button className="btn btn-warning w-100" onClick={onStartQuiz}>
+          <button className="btn btn-warning w-100" onClick={startQuizMode}>
             <img
               src={quizIcon}
               alt="Quiz icon"
@@ -62,7 +59,7 @@ export const Menu: React.FC<MenuProps> = ({
           </button>
         </li>
         <li>
-          <button className="btn btn-warning w-100" onClick={onShowQuizStats}>
+          <button className="btn btn-warning w-100" onClick={showQuizStatistics}>
             <img
               src={statsIcon}
               alt="Stats Icon"
@@ -75,8 +72,8 @@ export const Menu: React.FC<MenuProps> = ({
       <div className="settings-row">
         <MusicToggle />
         <DeductionToggle
-          isActive={isDeductionActive}
-          onToggle={onToggleDeduction}
+          isActive={deduction.isDeductionMode}
+          onToggle={deduction.toggleDeductionMode}
         />
       </div>
     </div>

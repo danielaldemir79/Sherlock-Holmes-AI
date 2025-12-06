@@ -43,7 +43,7 @@ Den här kommandoraden `yarn add sass` används för att lägga till sass som et
 1. **Använd OpenAI-paketet i din applikation:** Nu när OpenAI-paketet är installerat, kan du importera och använda det i din React-applikation för att kommunicera med OpenAI:s API.
 
    Kom ihåg att du behöver en API-nyckel från OpenAI för att kunna göra API-anrop. Denna nyckel bör hanteras försiktigt och aldrig exponeras på klient-sidan av din applikation av säkerhetsskäl.
-  `openAI key= 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`
+  `openAI key= DIN_API_NYCKEL_HÄR`
 
 # Axios
 För att installera Axios i din React ChatGPT-applikation och för att förstå vad Axios är, kan du följa dessa enkla steg:

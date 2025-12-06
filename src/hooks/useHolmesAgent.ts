@@ -21,6 +21,10 @@ export const useHolmesAgent = ({ onChatSaved }: HolmesAgentProps = {}) => {
 
   const deduction = useDeduction();
 
+  // ⚠️ SECURITY NOTE: 
+  // For a local project/prototype, using the API key on the client side is acceptable.
+  // IF deploying publicly, this MUST be moved to a backend server (Node/Express/Next.js)
+  // to prevent the API key from being exposed to users.
   const openai = new OpenAI({
     apiKey: import.meta.env.VITE_OPENAI_API_KEY,
     dangerouslyAllowBrowser: true,
