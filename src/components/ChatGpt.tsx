@@ -47,9 +47,6 @@ export const ChatGpt = forwardRef<ChatGptHandle, ChatGptProps>(({ onChatSaved },
     // Track thinking state (separate from loading)
     const [isThinking, setIsThinking] = React.useState(false);
 
-    // Shows predefined question options only at start
-    const [showQuestionOptions, setShowQuestionOptions] = React.useState(true);
-
     // Track if welcome message was already shown
     const [welcomeShown, setWelcomeShown] = React.useState<boolean>(false);
 
@@ -126,19 +123,6 @@ export const ChatGpt = forwardRef<ChatGptHandle, ChatGptProps>(({ onChatSaved },
                 { message: `📊 SYSTEM: ${statsMessage}`, user: 'System', timestamp: new Date() }
             ]);
         }
-    };
-
-    // Predefined question options
-    const questionOptions = [
-        "Berätta om dina berömda fall",
-        "Hur löser du mysterier?",
-        "Vem är Moriarty?"
-    ];
-
-    // Function to trigger a quick question
-    const askQuickQuestion = (question: string) => {
-        getOpenAIResponse(undefined, question);
-        setShowQuestionOptions(false); // hides questions after first click
     };
 
     // Initial welcome message + questions as messages
@@ -340,7 +324,6 @@ Svara på svenska och var hjälpsam men håll dig till Holmes karaktär.`
         // Reset chat
         setResponseMessages([]);
         setResponseMessage({});
-        setShowQuestionOptions(true); // shows questions again on new chat
         setWelcomeShown(false); // Allow welcome message to show again
         setLoadedCaseInfo(null); // Clear case info
 
@@ -431,20 +414,6 @@ Svara på svenska och var hjälpsam men håll dig till Holmes karaktär.`
                         if (!active) setStartQuizTrigger(false);
                     }}
                 />
-
-                {showQuestionOptions && !isQuizActive && (
-                    <div className="question-options d-flex flex-wrap gap-2 mb-2">
-                        {questionOptions.map((question, index) => (
-                            <button
-                                key={index}
-                                className="btn btn-secondary btn-sm"
-                                onClick={() => askQuickQuestion(question)}
-                            >
-                                {question}
-                            </button>
-                        ))}
-                    </div>
-                )}
             </div>
 
             {/* Anti-cheat message during quiz */}
