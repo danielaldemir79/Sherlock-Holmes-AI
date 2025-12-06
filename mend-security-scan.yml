@@ -1,0 +1,48 @@
+# Mend Bolt Security Scan Pipeline
+# Fast third-party dependency scanning for Pull Requests
+# Runs independently from main build pipeline
+
+trigger:
+  branches:
+    include:
+    - master
+    - develop
+
+pr:
+  branches:
+    include:
+    - '*'
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  projectFolder: '.'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '20.x'
+  displayName: 'Install Node.js'
+
+- task: YarnInstaller@3
+  displayName: 'Install yarn 1.x'
+  inputs:
+    versionSpec: '1.x'
+
+# Install dependencies (needed for Mend to analyze)
+- script: |
+    yarn install
+  displayName: 'Install dependencies'
+
+# Mend Bolt (WhiteSource) Security Scan
+- task: WhiteSource@21
+  displayName: 'Mend Bolt Security Scan'
+  inputs:
+    cwd: '$(projectFolder)'
+    projectName: 'chatgpt'
+
+# Optional: Fail build on high/critical vulnerabilities
+- script: |
+    echo "Security scan completed. Check Mend Bolt dashboard for details."
+  displayName: 'Security scan summary'
