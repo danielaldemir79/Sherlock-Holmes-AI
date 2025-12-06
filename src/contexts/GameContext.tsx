@@ -39,7 +39,7 @@ interface GameContextType {
   setQuizActive: (active: boolean) => void;
   startQuizTrigger: boolean;
   setStartQuizTrigger: (trigger: boolean) => void;
-  
+
   // Helper Actions
   startQuizMode: () => void;
   showQuizStatistics: () => void;
