@@ -65,9 +65,9 @@ export const useHolmesAgent = ({ onChatSaved }: HolmesAgentProps = {}) => {
     setResponseMessages([]); // Clear chat
     setResponseMessage({});
     setWelcomeShown(true); // Suppress default welcome
-    
+
     const prompt = "Starta ett nytt interaktivt mordmysterium. Du är spelledare (Game Master) men agerar som Sherlock Holmes. Presentera ett kort, spännande fall för mig (användaren/assistenten). Ge mig platsen, offret och 3 misstänkta med korta beskrivningar. Avslöja INTE lösningen. Avsluta med att fråga vad jag vill undersöka först.";
-    
+
     await processMessage(prompt, true);
   };
 

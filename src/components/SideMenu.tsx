@@ -41,8 +41,8 @@ export const Menu: React.FC<MenuProps> = ({
 
       <h3 className="menu-title mt-4">🕵️‍♂️ Mystery Mode</h3>
       <hr className="menu-divider" />
-      <button 
-        className={`btn w-100 mb-3 ${mystery.isActive ? 'btn-danger' : 'btn-primary'}`} 
+      <button
+        className={`btn w-100 mb-3 ${mystery.isActive ? 'btn-danger' : 'btn-primary'}`}
         onClick={startMysteryGame}
         disabled={mystery.isActive}
       >
