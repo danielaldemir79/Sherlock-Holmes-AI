@@ -1,200 +1,134 @@
-# ReactoBot
+# Holmes AI
 
-A conversational AI chatbot built with React, TypeScript, and OpenAI's GPT-4 API. ReactoBot is configured to respond as "Jarvis" from the Iron Man films, providing an interactive assistant experience in Swedish.
+An interactive mystery-solving web app built with React, TypeScript, and Vite. Holmes AI features quiz-driven gameplay, deduction animations, sound effects, and an optional OpenAI-powered assistant.
 
 ![React](https://img.shields.io/badge/React-18.2.0-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.2.2-blue)
 ![Vite](https://img.shields.io/badge/Vite-5.0.8-purple)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.2-purple)
 
-## Features
+## Highlights
 
-- **Real-time Streaming Responses**: Messages stream progressively using OpenAI's streaming API
-- **Jarvis-style Personality**: Bot configured to respond in the style of Tony Stark's AI assistant
-- **Responsive UI**: Built with Bootstrap 5 for mobile and desktop
-- **Dynamic Avatars**: User and bot avatars generated via Dicebear API
-- **Live Timestamps**: Relative time display that updates in real-time
-- **Chat History**: Full conversation history with reset functionality
+- **Mystery Quizzes**: Timed questions, results, and statistics (`src/components/quiz/*`).
+- **Deduction Mode**: Animated deductions and visual effects.
+- **Sound & Music**: Centralized audio management with toggles.
+- **Case File Drawer**: Slide-out drawer for storyline and hints.
+- **Optional AI Chat**: `ChatGpt.tsx` integrates OpenAI (development only).
 
 ## Prerequisites
 
-- Node.js (v16 or higher)
-- Yarn package manager
-- OpenAI API key
+- Node.js v18+ (LTS recommended)
+- Yarn (via Corepack or npm)
+- Optional: OpenAI API key for the chat component
 
-## Getting Started
+## Quick Start
 
-### Installation
+```powershell
+# Clone and install
+git clone https://github.com/danielaldemir79/Holmes-AI.git
+cd Holmes-AI
+yarn install
 
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd ChatGpt
-   ```
-
-2. Install dependencies:
-   ```bash
-   yarn install
-   ```
-
-3. Create a `.env` file in the project root:
-   ```env
-   VITE_OPENAI_API_KEY=your_openai_api_key_here
-   ```
-
-   Get your API key from [OpenAI Platform](https://platform.openai.com/api-keys)
-
-### Development
-
-Start the development server with hot module replacement:
-
-```bash
+# Development
 yarn dev
-```
 
-The application will be available at `http://localhost:5173`
-
-### Building for Production
-
-Build the application for production:
-
-```bash
-yarn run build
-```
-
-The optimized build will be output to the `dist/` directory.
-
-### Preview Production Build
-
-Preview the production build locally:
-
-```bash
+# Build and preview
+yarn build
 yarn preview
 ```
 
-### Linting
+App starts at `http://localhost:5173`.
 
-Run ESLint to check code quality:
+## Environment Variables
 
-```bash
-yarn lint
+Create `.env` in the project root if using the AI chat:
+
+```env
+VITE_OPENAI_API_KEY=your_openai_api_key_here
 ```
+
+Note: This project’s OpenAI integration is browser-side and intended for local development only. Do not expose real keys in production.
+
+## Scripts
+
+- `yarn dev`: Start dev server
+- `yarn build`: Production build to `dist/`
+- `yarn preview`: Preview built app
+- `yarn lint`: Run ESLint
 
 ## Project Structure
 
 ```
-ChatGpt/
+Holmes-AI/
 ├── src/
+│   ├── App.tsx
+│   ├── main.tsx
 │   ├── components/
-│   │   ├── ChatGpt.tsx          # Main chat component with OpenAI integration
-│   │   └── ResponseMessage.tsx  # Individual message display component
+│   │   ├── CaseFileDrawer.tsx
+│   │   ├── ChatGpt.tsx
+│   │   ├── DeductionAnimation.tsx
+│   │   ├── DeductionMode.tsx
+│   │   ├── DeductionToggle.tsx
+│   │   ├── MusicToggle.tsx
+│   │   ├── QuizDisplay.tsx
+│   │   ├── QuizProvider.tsx
+│   │   ├── ResponseMessage.tsx
+│   │   ├── SideMenu.tsx
+│   │   └── quiz/
+│   │       ├── QuizLogic.tsx
+│   │       ├── QuizQuestion.tsx
+│   │       ├── QuizResults.tsx
+│   │       └── QuizTimer.tsx
+│   ├── contexts/
+│   │   └── SoundContext.tsx
+│   ├── data/
+│   │   └── quizQuestions.ts
+│   ├── hooks/
+│   │   ├── useAudioManager.ts
+│   │   ├── useDeduction.ts
+│   │   └── useSoundEffects.ts
 │   ├── models/
-│   │   └── ResponseMessageProps.ts  # TypeScript interfaces
+│   │   ├── QuizState.ts
+│   │   └── ResponseMessageProps.ts
 │   ├── styles/
-│   │   ├── _bootswatch.scss     # Bootstrap theme customization
-│   │   ├── _variables.scss      # SCSS variables
-│   │   └── index.scss           # Main stylesheet
-│   ├── assets/                  # Images and static assets
-│   ├── App.tsx                  # Root component
-│   └── main.tsx                 # Application entry point
-├── .env                         # Environment variables (not in repo)
+│   │   ├── _bootswatch.scss
+│   │   ├── _variables.scss
+│   │   ├── caseFile.scss
+│   │   └── deduction.scss
+│   └── utils/
+│       ├── ChatSerializer.ts
+│       ├── mysteryNameGenerator.ts
+│       ├── quizStatistics.ts
+│       ├── soundEffects.ts
+│       └── visualEffects.ts
+├── public/
+├── index.html
 ├── package.json
 ├── tsconfig.json
 ├── vite.config.ts
 └── README.md
 ```
 
-## Technology Stack
+## Configuration Notes
 
-### Core
-- **React 18.2** - UI library
-- **TypeScript 5.2** - Type-safe JavaScript
-- **Vite 5.0** - Fast build tool and dev server
+- **Bootstrap JS**: If you use Bootstrap’s interactive components, install Popper:
+  ```powershell
+  yarn add @popperjs/core
+  ```
+- **OpenAI Chat**: In `src/components/ChatGpt.tsx`, the browser-side call uses `dangerouslyAllowBrowser`. For production, proxy calls through a backend server.
 
-### Styling
-- **Bootstrap 5.3** - CSS framework
-- **Sass** - CSS preprocessor
+## Security
 
-### APIs
-- **OpenAI API** - GPT-4 language model
-- **Dicebear API** - Avatar generation
-
-## Configuration
-
-### OpenAI Settings
-
-The bot configuration can be customized in `src/components/ChatGpt.tsx`:
-
-```typescript
-const stream = await openai.chat.completions.create({
-  messages: [
-    {
-      role: 'assistant',
-      content: 'Your custom system prompt here...'
-    },
-    { role: 'user', content: inputMessage || '' }
-  ],
-  model: 'gpt-4',
-  stream: true
-});
-```
-
-### Bot Personality
-
-To change the bot's personality, modify the system prompt in the `getOpenAIResponse` function.
-
-## Architecture
-
-### Streaming Flow
-
-1. User submits a message → added to `responseMessages` array
-2. OpenAI stream starts → `responseMessage` accumulates chunks in real-time
-3. Stream completes → `responseMessage` is saved to history and reset
-
-### State Management
-
-- `responseMessages`: Array of all completed messages (chat history)
-- `responseMessage`: Current message being streamed from OpenAI
-- `inputMessage`: User's current input text
-
-### TypeScript Patterns
-
-The project uses strict TypeScript mode. All optional properties in `ResponseMessageProps` must be handled with proper null checking:
-
-```typescript
-// Correct pattern
-if (responseMessage?.message && responseMessage.message.length > 0) {
-  // Handle message
-}
-
-// Streaming updates with fallbacks
-message: (prevMessage.message || '') + (chunk.choices[0]?.delta?.content || '')
-```
-
-## Known Issues
-
-- Bootstrap peer dependency warning: `@popperjs/core@^2.11.8` is not installed (Bootstrap JavaScript components requiring Popper.js will not work)
-- Client-side OpenAI API calls use `dangerouslyAllowBrowser: true` - not recommended for production
-
-## Security Considerations
-
-⚠️ **Important**: This application makes OpenAI API calls directly from the browser, which exposes your API key. For production use, implement a backend proxy to handle API requests securely.
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+- Do not commit `.env` files with secrets.
+- Avoid using real OpenAI keys in the browser.
+- Consider server-side API proxy for production deployments.
 
 ## License
 
-This project is private and proprietary.
+Private and proprietary.
 
 ## Acknowledgments
 
 - Built with [Vite](https://vitejs.dev/)
 - UI powered by [Bootstrap](https://getbootstrap.com/)
-- AI capabilities by [OpenAI](https://openai.com/)
-- Avatars by [Dicebear](https://dicebear.com/)
+- Optional AI via [OpenAI](https://openai.com/)
