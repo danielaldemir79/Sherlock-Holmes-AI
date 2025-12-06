@@ -1,19 +1,34 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { useHolmesAgent } from '../hooks/useHolmesAgent';
 import { QuizStatistics } from '../utils/quizStatistics';
+import { ResponseMessageProps } from '../models/ResponseMessageProps';
+
+// Define the return type of useDeduction based on its implementation
+interface DeductionHook {
+  isDeductionMode: boolean;
+  isAnalyzing: boolean;
+  observations: any[]; // Keeping any for the observation object structure for now, or define it if known
+  userQuestion: string;
+  toggleDeductionMode: () => void;
+  startAnalysis: (question: string) => void;
+  addObservation: (text: string) => void;
+  showObservation: (id: number) => void;
+  completeAnalysis: () => void;
+  reset: () => void;
+}
 
 // Define the shape of the context
 interface GameContextType {
   // Holmes Agent State & Methods
   inputMessage: string;
   setInputMessage: (msg: string) => void;
-  responseMessages: any[];
-  responseMessage: any;
+  responseMessages: ResponseMessageProps[];
+  responseMessage: ResponseMessageProps;
   loading: boolean;
   isThinking: boolean;
   setIsThinking: (thinking: boolean) => void;
   loadedCaseInfo: { name: string; number: string } | null;
-  deduction: any;
+  deduction: DeductionHook;
   processMessage: (msg: string) => Promise<void>;
   resetChat: () => void;
   loadChatById: (chatId: string, caseName?: string) => void;
@@ -24,13 +39,11 @@ interface GameContextType {
   setQuizActive: (active: boolean) => void;
   startQuizTrigger: boolean;
   setStartQuizTrigger: (trigger: boolean) => void;
-
+  
   // Helper Actions
   startQuizMode: () => void;
   showQuizStatistics: () => void;
-}
-
-const GameContext = createContext<GameContextType | undefined>(undefined);
+}const GameContext = createContext<GameContextType | undefined>(undefined);
 
 interface GameProviderProps {
   children: ReactNode;
