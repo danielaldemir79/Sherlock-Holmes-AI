@@ -20,7 +20,9 @@ export const Menu: React.FC<MenuProps> = ({
     resetChat,
     showQuizStatistics,
     loadChatById,
-    deduction
+    deduction,
+    startMysteryGame,
+    mystery
   } = useGameContext();
 
   return (
@@ -35,6 +37,16 @@ export const Menu: React.FC<MenuProps> = ({
       </div>
       <button className="btn btn-secondary w-100" onClick={resetChat}>
         📁 New Case
+      </button>
+
+      <h3 className="menu-title mt-4">🕵️‍♂️ Mystery Mode</h3>
+      <hr className="menu-divider" />
+      <button 
+        className={`btn w-100 mb-3 ${mystery.isActive ? 'btn-danger' : 'btn-primary'}`} 
+        onClick={startMysteryGame}
+        disabled={mystery.isActive}
+      >
+        {mystery.isActive ? '🔍 Mysterium Pågår...' : '🧩 Starta Mysterium'}
       </button>
 
       <h3 className="menu-title mt-4">

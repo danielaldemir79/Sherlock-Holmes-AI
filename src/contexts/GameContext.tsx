@@ -17,6 +17,13 @@ interface DeductionHook {
   reset: () => void;
 }
 
+interface MysteryHook {
+  isActive: boolean;
+  caseTitle: string | null;
+  startMystery: () => void;
+  stopMystery: () => void;
+}
+
 // Define the shape of the context
 interface GameContextType {
   // Holmes Agent State & Methods
@@ -33,6 +40,8 @@ interface GameContextType {
   resetChat: () => void;
   loadChatById: (chatId: string, caseName?: string) => void;
   addSystemMessage: (msg: string) => void;
+  startMysteryGame: () => Promise<void>;
+  mystery: MysteryHook;
 
   // Quiz State
   isQuizActive: boolean;
@@ -43,7 +52,9 @@ interface GameContextType {
   // Helper Actions
   startQuizMode: () => void;
   showQuizStatistics: () => void;
-}const GameContext = createContext<GameContextType | undefined>(undefined);
+}
+
+const GameContext = createContext<GameContextType | undefined>(undefined);
 
 interface GameProviderProps {
   children: ReactNode;
@@ -77,6 +88,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children, onChatSave
 
   const value: GameContextType = {
     ...agent,
+    mystery: agent.mystery,
     resetChat, // Use our wrapped reset
     isQuizActive,
     setQuizActive,
