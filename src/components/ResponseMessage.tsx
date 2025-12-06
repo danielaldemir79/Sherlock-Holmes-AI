@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import holmesIcon from '../assets/holmes.png';
 import { useSoundContext } from '../contexts/SoundContext';
 import { ResponseMessageProps } from '../models/ResponseMessageProps';
 
@@ -88,11 +89,11 @@ const ResponseMessage = ({ message, user, timestamp, isStreaming, onTypingStart,
         <div className={`message-row ${isUser ? "right" : "left"} ${isArchived ? 'sepia-tone' : ''}`}>
             {!isUser && (
                 <div className={`avatar ${isSystem ? 'avatar-system' : 'avatar-holmes'}`}>
-                    {isSystem && "🖥️"}
+                    {isSystem ? (
+                        <img src={holmesIcon} alt="Holmes" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                    ) : null}
                 </div>
             )}
-
-
             <div className={`bubble ${isUser ? "user-bubble" : isSystem ? "system-bubble" : "bot-bubble"}`}>
                 {!isUser && (
                     <div className="sender-name">{user}</div>
