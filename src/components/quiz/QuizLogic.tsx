@@ -133,11 +133,16 @@ export const QuizLogic: React.FC<QuizLogicProps> = ({ isActive, onStateChange, c
     const finishQuiz = (userAnswers: number[]) => {
         // soundEffects.playQuizCompleteSound(); // TODO: Add to SoundContext
 
-        const updatedStats = QuizStatistics.updateStats(quizState.score, quizState.questions.length);
-        const isNewRecord = quizState.score === updatedStats.bestScore && updatedStats.totalGames > 1;
+        // Compute final score from answers to avoid stale state issues
+        const finalScoreCount = quizState.questions.reduce((acc, q, i) => {
+            return acc + (userAnswers[i] === q.correctAnswer ? 1 : 0);
+        }, 0);
+
+        const updatedStats = QuizStatistics.updateStats(finalScoreCount, quizState.questions.length);
+        const isNewRecord = finalScoreCount === updatedStats.bestScore && updatedStats.totalGames > 1;
 
         // Show visual effects based on score
-        const percentage = (quizState.score / quizState.questions.length) * 100;
+        const percentage = (finalScoreCount / quizState.questions.length) * 100;
         setTimeout(() => {
             if (percentage >= 90) {
                 VisualEffects.showConfetti();
@@ -148,7 +153,7 @@ export const QuizLogic: React.FC<QuizLogicProps> = ({ isActive, onStateChange, c
             }
         }, 500);
 
-        const finalScore = `🎯 **Quiz avslutat!** Din poäng: **${quizState.score}/${quizState.questions.length}** ${getScoreMessage(quizState.score, quizState.questions.length)}${isNewRecord ? ' 🏆 **NYTT REKORD!** 🏆' : ''}`;
+        const finalScore = `🎯 **Quiz avslutat!** Din poäng: **${finalScoreCount}/${quizState.questions.length}** ${getScoreMessage(finalScoreCount, quizState.questions.length)}${isNewRecord ? ' 🏆 **NYTT REKORD!** 🏆' : ''}`;
         setQuizResultMessage(finalScore);
 
         setQuizState(prev => ({

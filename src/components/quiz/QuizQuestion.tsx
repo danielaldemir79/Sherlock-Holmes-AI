@@ -24,7 +24,7 @@ export const QuizQuestion: React.FC<QuizQuestionProps> = ({
     score
 }) => {
     const questionNumber = currentIndex + 1;
-    
+
     return (
         <div className="quiz-question-container mb-3 p-3" style={{
             backgroundColor: '#2d1810',
@@ -34,15 +34,15 @@ export const QuizQuestion: React.FC<QuizQuestionProps> = ({
         }}>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <small className="text-light">
-                    Fråga {questionNumber} av {totalQuestions} | 
-                    Poäng: {score}/{currentIndex}
+                    Fråga {questionNumber} av {totalQuestions} |
+                    Poäng: {score}/{totalQuestions}
                 </small>
             </div>
-            
+
             <h5 className="text-warning mb-3">
                 {question.question}
             </h5>
-            
+
             <div className="quiz-options d-grid gap-2">
                 {question.options.map((option, index) => (
                     <button
